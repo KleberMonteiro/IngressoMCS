@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:head>
+	
+		<meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1" /> 
+		<link rel="shortcut icon" type="image/png" href="#{facesContext.externalContext.requestContextPath}/images/shortcut_icon.png" />
+		
+		<h:outputStylesheet library="css" name="estilo.css" />
+		<h:outputStylesheet library="css" name="estilo_primefaces.css" />
+		<h:outputScript library="js" name="scripts.js" />
+		
+		<title>Sapro Web</title>
+	
+	</h:head>
+	
+	<h:body>
+	
+		<p:growl id="growl" life="5000"/>
+		
+		<div id="all">
+			<div id="top">
+				<div id="top_content">
+					<div id="usuario" style="float: left; padding-top: 3px">
+						<h:outputText value="Olá, #{sessionController.usuario.nome}" style="color: #D7E7F3; font-size: 10pt; font-weight: bold"/>
+					</div>
+					<div id="menu_top" style="float: right">
+						<p:outputPanel rendered="#{false}">
+							<h:outputLink value="/usuario" style="color: #D7E7F3; font-size: 10pt; font-weight: bold">
+								<h:outputText value="Gerenciar Usuários"/> 
+							</h:outputLink>
+							<p:spacer width="15" height="0" />
+							<h:outputText value="|" style="color: #D7E7F3;"/>
+							<p:spacer width="15" height="0" /> 
+						</p:outputPanel>
+						<h:outputLink value="/j_spring_security_logout" style="color: #D7E7F3; font-size: 10pt; font-weight: bold">
+							<h:outputText value="Sair"/> 
+						</h:outputLink>
+					</div>
+				</div>	
+			</div>
+			<div id="page">			
+				<div id="header">
+					<ui:include src="header.xhtml" />
+				</div>
+				<div id="content">	
+					<div id="left">
+						<ui:include src="side_menu.xhtml" />
+					</div>	
+					<div id="right">
+						<ui:insert name="page_content" />
+					</div>
+					<div class="plataforma"></div>
+				</div>				
+			</div>
+			<div id="clear"></div>
+			<div id="footer">
+				<ui:include src="footer.xhtml" />
+			</div>
+		</div>
+		
+	</h:body>
+
+</html>

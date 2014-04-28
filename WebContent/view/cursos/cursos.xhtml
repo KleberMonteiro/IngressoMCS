@@ -1,0 +1,162 @@
+<ui:composition template="../faces/default.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">	
+
+	<ui:define name="page_content">
+		
+		<h:form>	
+			<h:inputHidden value="#{cursoController.atualizarPagina}" />
+		</h:form>
+		
+		<h:outputText class="pagina_atual" value="cursos" style="display: none" />
+		
+		<div id="conteudo">
+		
+			<div id="topo">
+				<div id="titulo">
+					<h:outputText value="Cursos" styleClass="titulo" /><br />
+					<h:outputText value="Área disponível para o gerenciamento de cadastros, atualizações e remoções de cursos" styleClass="sub_titulo" /><br />
+				</div>
+				<div id="imagem">
+					<p:graphicImage value="/images/cursos.png" styleClass="imagem" />
+				</div>
+				<div class="plataforma"></div>
+			</div>
+		
+			<p:tabView id="tabview" widgetVar="tabview">
+			
+				<p:tab id="aba_cadastro" title="Cadastro">
+				
+					<div id="cadastro">
+						
+						<div class="tab_top">
+		            		<div class="tab_top_left">
+		            			<h:form>
+			            			<p:commandButton value="Novo Registro" actionListener="#{cursoController.novoRegistro}" 
+										update=":tabview:form_cadastro, :tabview:form_consulta" style="float: left"
+										onclick="showAjaxLoader('cadastro')" oncomplete="hideAjaxLoader('cadastro')"/>
+								</h:form>
+		            		</div>
+		            		<div class="tab_top_right">
+		            			<div class="ajax_loader">
+									<img src="#{facesContext.externalContext.requestContextPath}/images/ajax-loader.gif" />
+								</div>
+		            		</div>
+		            		<div class="plataforma"></div>
+		            	</div>
+						
+						<h:form id="form_cadastro" prependId="false">							
+							<h:outputLabel for="nome" value="Nome: * "/>
+							<p:inputText id="nome" value="#{cursoController.curso.nome}" size="60"/>							
+							<br /><br /><br />
+						
+							<p:accordionPanel id="accordion" multiple="true" var="periodo" value="#{cursoController.periodosStr}" activeIndex="false">
+								<p:tab title="#{cursoController.periodosMap[periodo]}"> 
+									<div class="periodo">							
+							        	<div class="disciplinas" style="text-align: center">
+							        	
+					        				<ui:repeat var="dia" value="#{cursoController.dias}">
+					        					<p:selectOneMenu value="#{cursoController.gradeMap[periodo][dia]}">
+								        			<f:selectItem itemLabel="" itemValue=""/>
+								        			<f:selectItems value="#{cursoController.disciplinas}" var="disciplina" itemLabel="#{disciplina.nome}" itemValue="#{disciplina.id}"/>
+								        		</p:selectOneMenu>        		
+							        			<br />
+					        				</ui:repeat>  
+					        				      							  
+							        	</div>
+							        	<div class="plataforma"></div>
+							        </div>
+							 	</p:tab>
+					        </p:accordionPanel>	 
+					        
+					        <div id="salvar" style="position: absolute; top: 60px; left: 130px;">
+					            <p:commandButton value="Salvar" actionListener="#{cursoController.salvar}"
+					            	update=":tabview:form_cadastro, :tabview:form_consulta, :growl"
+					            	onclick="showAjaxLoader('cadastro')" oncomplete="hideAjaxLoader('cadastro')" />		            
+				         	</div>
+					        
+					    </h:form>
+					
+					</div>
+				
+				</p:tab>
+				
+				<p:tab id="aba_consulta" title="Consulta">
+		
+					<div id="consulta">
+		
+						<h:form id="form_consulta" prependId="false">
+						
+							<div class="tab_top">
+			            		<div class="tab_top_left">
+			            			<p:commandButton value="Excluir registros selecionados" onclick="confirmarExclusao.show()" update=":growl" style="float: left"/>
+			            		</div>
+			            		<div class="tab_top_right">
+			            			<div class="ajax_loader">
+										<img src="#{facesContext.externalContext.requestContextPath}/images/ajax-loader.gif" />
+									</div>
+			            		</div>
+			            		<div class="plataforma"></div>
+			            	</div>			            				            	
+			            	
+						    <p:dataTable id="cursos_table" widgetVar="cursos_table" var="curso" value="#{cursoController.cursosDataModel}"  
+				                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+				                rowsPerPageTemplate="5,10,15,20,25,30" selection="#{cursoController.cursosSelecionados}" emptyMessage="Nenhum registro encontrado" 
+				                paginator="true" rows="15" rowKey="#{curso.id}" styleClass="data_table">			  		 
+						  				  
+						  		<p:column selectionMode="multiple" style="width:18px" />
+						  
+						  		<p:column style="width:18px">
+						  			<p:commandLink actionListener="#{cursoController.editar}" update=":tabview:form_cadastro" 
+						  				onclick="showAjaxLoader('consulta')" oncomplete="hideAjaxLoader('consulta'), tabview.select(0)">				  			  
+						        		<p:graphicImage value="/images/editar.png" title="Editar"/>
+						        		<f:attribute name="curso" value="#{curso}"/>
+						        	</p:commandLink>      
+						        </p:column>
+						  
+						  		<p:column headerText="ID" sortBy="#{curso.id}" filterBy="#{curso.id}"
+									filterMatchMode="exact" filterStyle="width:30px;" style="width:60px">  
+						            #{curso.id}
+						        </p:column>	
+						  
+						        <p:column headerText="Nome" sortBy="#{curso.nome}" filterBy="#{curso.nome}"
+									filterMatchMode="contains" filterStyle="width:300px;">  
+						            #{curso.nome} 
+						        </p:column>   		  
+						        
+						    </p:dataTable>
+						
+						</h:form>
+						
+					</div>	
+			
+				</p:tab>
+				
+			</p:tabView>
+			
+		</div>
+		
+		<h:form id="form_exclusao_dialog" prependId="false">
+		    <p:confirmDialog id="confirmar_exclusao" message="Tem certeza eu desejas excluir estas informações?"  
+                header="Confirmação de exclusão" severity="info" widgetVar="confirmarExclusao" closable="false">  
+                
+                <div id="confirmar">  
+			        <p:commandButton id="sim" value="Sim" actionListener="#{cursoController.excluir}" 
+			        	update=":tabview:form_cadastro, :tabview:form_consulta, :growl"
+			        	onclick="showAjaxLoader('consulta'), confirmarExclusao.hide()" 
+			        	oncomplete="hideAjaxLoader('consulta')" style="margin-right: 20px"/>			        		          
+			        <p:commandButton id="nao" value="Não" onclick="confirmarExclusao.hide()" type="button" />
+		        </div>  
+		                  
+		    </p:confirmDialog>
+	    </h:form>
+		
+		<div id="linha"></div>			
+		<div id="separador"></div>				
+
+	</ui:define>
+
+</ui:composition>

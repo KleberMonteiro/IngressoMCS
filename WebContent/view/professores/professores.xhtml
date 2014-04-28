@@ -1,0 +1,166 @@
+<ui:composition template="../faces/default.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">	
+
+	<ui:define name="page_content">
+	
+		<h:form>
+			<h:inputHidden value="#{professorController.atualizarPagina}" />
+		</h:form>
+		
+		<h:outputText class="pagina_atual" value="professores" style="display: none" />
+		
+		<div id="conteudo">
+		
+			<div id="topo">
+				<div id="titulo">
+					<h:outputText value="Professores" styleClass="titulo" /><br />
+					<h:outputText value="Área disponível para o gerenciamento de cadastros, atualizações e remoções de professores" styleClass="sub_titulo" /><br />
+				</div>
+				<div id="imagem">
+					<p:graphicImage value="/images/professores.png" styleClass="imagem" />
+				</div>
+				<div class="plataforma"></div>
+			</div>
+			
+			<p:tabView id="tabview" widgetVar="tabview">
+			
+				<p:tab id="aba_cadastro" title="Cadastro">
+		
+					<div id="cadastro">						
+						
+						<div class="tab_top">
+		            		<div class="tab_top_left">
+		            			<h:form>
+			            			<p:commandButton value="Novo Registro" actionListener="#{professorController.novoRegistro}" 
+										update=":tabview:form_professor, :tabview:form_table" style="float: left"
+										onclick="showAjaxLoader('cadastro')" oncomplete="hideAjaxLoader('cadastro')"/>
+								</h:form>
+		            		</div>
+		            		<div class="tab_top_right">
+		            			<div class="ajax_loader">
+									<img src="#{facesContext.externalContext.requestContextPath}/images/ajax-loader.gif" />
+								</div>
+		            		</div>
+		            		<div class="plataforma"></div>
+		            	</div>		            	
+							
+						<h:form id="form_professor" prependId="false">							
+							<h:outputLabel for="nome" value="Nome: *"/>
+							<p:spacer width="31" height="0" />
+							<p:inputText id="nome" value="#{professorController.professor.nome}" size="60"/>							
+							<div class="mensagem"></div>
+							
+							<h:outputLabel for="matricula" value="Matrícula: "/>
+							<p:spacer width="20" height="0" />
+							<p:inputText id="matricula" value="#{professorController.professor.matricula}" size="30"/>
+							<div style="height: 30px"></div>
+							
+							<div class="div_label">
+								<h:outputLabel for="disciplinas" value="Disciplinas: "/>
+								<p:spacer width="10" height="0" />
+							</div>
+							<div class="div_component">
+								<p:pickList id="disciplinas" value="#{professorController.disciplinas}"  
+					                var="disciplina" itemLabel="#{disciplina.nome}" itemValue="#{disciplina}" 
+					                converter="disciplinaConverter">		                
+					                <f:facet name="sourceCaption">Disponíveis</f:facet>  
+			        				<f:facet name="targetCaption">Selecionadas</f:facet>
+					            </p:pickList>
+					            <div class="mensagem">
+							
+								</div>
+							</div>
+				            
+				            <div class="plataforma"></div>
+				            
+				            <div id="salvar" style="position: absolute; top: 60px; left: 130px;">
+					            <p:commandButton value="Salvar" actionListener="#{professorController.salvar}"
+					            	update=":tabview:form_professor, :tabview:form_table, :growl"
+					            	onclick="showAjaxLoader('cadastro')" oncomplete="hideAjaxLoader('cadastro')" />			            
+				         	</div>
+							
+				      	 </h:form>
+				      	 
+					</div>
+					
+				</p:tab>
+				
+				<p:tab id="aba_consulta" title="Consulta">
+				    
+				    <div id="consulta"> 
+				         
+			            <h:form id="form_table" prependId="false">
+			            	
+			            	<div class="tab_top">
+			            		<div class="tab_top_left">
+			            			<p:commandButton value="Excluir registros selecionados" onclick="confirmarExclusao.show()" update=":growl" style="float: left"/>
+			            		</div>
+			            		<div class="tab_top_right">
+			            			<div class="ajax_loader">
+										<img src="#{facesContext.externalContext.requestContextPath}/images/ajax-loader.gif" />
+									</div>
+			            		</div>
+			            		<div class="plataforma"></div>
+			            	</div>			            				            	
+			            	
+						    <p:dataTable id="professores_table" widgetVar="professores_table" var="professor" value="#{professorController.professoresDataModel}"  
+				                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+				                rowsPerPageTemplate="5,10,15,20,25,30" selection="#{professorController.professoresSelecionados}" emptyMessage="Nenhum registro encontrado" 
+				                paginator="true" rows="15" rowKey="#{professor.id}" styleClass="data_table">			  		 
+						  				  
+						  		<p:column selectionMode="multiple" style="width:18px" />
+						  
+						  		<p:column style="width:18px">
+						  			<p:commandLink actionListener="#{professorController.editar}" update=":tabview:form_professor" 
+						  				onclick="showAjaxLoader('consulta')" oncomplete="hideAjaxLoader('consulta'), tabview.select(0)">				  			  
+						        		<p:graphicImage value="/images/editar.png" title="Editar"/>
+						        		<f:attribute name="professor" value="#{professor}"/>
+						        	</p:commandLink>      
+						        </p:column>
+						  
+						  		<p:column headerText="Matrícula" sortBy="#{professor.matricula}" filterBy="#{professor.matricula}"
+									filterMatchMode="exact" filterStyle="width:30px;" style="width:60px">  
+						            #{professor.matricula} 
+						        </p:column>	
+						  
+						        <p:column headerText="Nome" sortBy="#{professor.nome}" filterBy="#{professor.nome}"
+									filterMatchMode="contains" filterStyle="width:300px;">  
+						            #{professor.nome}  
+						        </p:column>   		  
+						        
+						    </p:dataTable>
+							
+					    </h:form>
+					
+					</div>
+				
+				</p:tab>
+				
+			</p:tabView>
+			
+		</div>
+		
+		 <h:form id="form_exclusao_dialog" prependId="false">
+		    <p:confirmDialog id="confirmar_exclusao" message="Tem certeza eu desejas excluir estas informações?"  
+                header="Confirmação de exclusão" severity="info" widgetVar="confirmarExclusao" closable="false">  
+                
+                <div id="confirmar">  
+			        <p:commandButton id="sim" value="Sim" actionListener="#{professorController.excluir}" update=":tabview:form_table, :growl"
+			        	onclick="showAjaxLoader('consulta'), confirmarExclusao.hide()" 
+			        	oncomplete="hideAjaxLoader('consulta')" style="margin-right: 20px"/>			        		          
+			        <p:commandButton id="nao" value="Não" onclick="confirmarExclusao.hide()" type="button" />
+		        </div>  
+		                  
+		    </p:confirmDialog>
+	    </h:form>
+	    
+	    <div id="linha"></div>
+	    <div id="separador"></div>				
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+					   http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+					   http://www.springframework.org/schema/security
+					   http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+	<http auto-config="true" authentication-manager-ref="adminAuthentication" request-matcher="ant">
+		<intercept-url pattern="/view/**" access="ROLE_ADMIN" />
+		<intercept-url pattern="/view/**" access="ROLE_USER" />
+		<intercept-url pattern="/turmas/**" access="ROLE_ADMIN" />
+		<intercept-url pattern="/turmas/**" access="ROLE_USER" />
+		<intercept-url pattern="/cursos/**" access="ROLE_ADMIN" />
+		<intercept-url pattern="/cursos/**" access="ROLE_USER" />
+		<intercept-url pattern="/disciplinas/**" access="ROLE_ADMIN" />
+		<intercept-url pattern="/disciplinas/**" access="ROLE_USER" />
+		<intercept-url pattern="/professores/**" access="ROLE_ADMIN" />
+		<intercept-url pattern="/professores/**" access="ROLE_USER" />			
+
+		<form-login login-page="/login" default-target-url="/turmas"
+			authentication-failure-url="/login.jsf?erro=true"
+			login-processing-url="/j_spring_security_check" />
+		<logout logout-url="/j_spring_security_logout"
+			logout-success-url="/login" />
+	</http>
+	
+	<authentication-manager alias="adminAuthentication">
+		<authentication-provider user-service-ref="adminCustomUserDetailsService">
+			<password-encoder hash="md5" />
+		</authentication-provider>
+	</authentication-manager>
+
+</beans:beans>

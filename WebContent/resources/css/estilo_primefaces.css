@@ -1,0 +1,87 @@
+.ui-widget {
+	font-size: 9pt !important;
+}
+
+.ui-widget-header {
+	background: #333;
+}
+
+.ui-widget-overlay {
+	background: #000;
+}
+
+.ui-state-active {
+	background: url("/images/fundo_active.png") 50% 50% repeat-x !important;
+}
+
+.ui-icon {
+	background-image: url("/javax.faces.resource/images/ui-icons_ffffff_256x240.png.jsf?ln=primefaces-home") !important;
+}
+
+.ui-growl {
+	top: 40px !important;
+}
+
+.ui-tabs {
+	background: none !important;
+	border: none !important;
+}
+
+.ui-state-highlight {
+	background: #DDD !important;
+	border: 1px solid #CCC !important;
+}
+
+.ui-tabs-selected a {
+	color: #FFF !important;
+}
+
+.ui-tabs-nav {
+	background: none !important;
+}
+
+.ui-tabs-nav li {
+	margin: 0 5px 1px 0 !important;
+	font-size: 11pt !important;
+}
+
+.ui-tabs-panel {
+	padding: 10px 0 !important;
+}
+
+.ui-paginator {
+	background: none !important;
+	border: none !important;
+}
+
+.ui-paginator-current {
+	color: #333 !important;
+}
+
+.ui-paginator-rpp-options {
+	border: 1px solid #DCDCDC;
+}
+
+.ui-paginator-top {
+	display: none;
+}
+
+.ui-paginator-bottom {
+	padding: 10px 0 0 0 !important;
+}
+
+.ui-selectonemenu {
+	width: 350px !important;	
+}
+
+.ui-datatable-data-empty .ui-dt-c {	
+	text-align: center !important;
+	padding: 50px !important;
+	
+}
+
+.ui-fieldset-legend {
+	background: #D7E7F3 !important;
+	color: #666 !important;
+	border: 1px solid #BBB !important;
+}

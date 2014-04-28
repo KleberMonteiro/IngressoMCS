@@ -1,0 +1,199 @@
+<ui:composition template="../faces/default.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">	
+
+	<ui:define name="page_content">
+		
+		<h:form>
+			<h:inputHidden value="#{turmaController.atualizarPagina}"/>
+		</h:form>
+		
+		<h:outputText class="pagina_atual" value="turmas" style="display: none" />
+		
+		<div id="conteudo">
+		
+			<div id="topo">
+				<div id="titulo">
+					<h:outputText value="Turmas" styleClass="titulo" /><br />
+					<h:outputText value="Área disponível para o gerenciamento de cadastros, atualizações e remoções de turmas" styleClass="sub_titulo" /><br />
+				</div>
+				<div id="imagem">
+					<p:graphicImage value="/images/turmas.png" styleClass="imagem" />
+				</div>
+				<div class="plataforma"></div>
+			</div>
+			
+			<p:tabView id="tabview" widgetVar="tabview">
+				
+				<p:tab id="aba_cadastro" title="Cadastro">
+			
+					<div id="cadastro">
+					
+						<div class="tab_top">
+		            		<div class="tab_top_left">
+		            			<h:form>
+			            			<p:commandButton value="Novo Registro" style="float: left" actionListener="#{turmaController.novoRegistro}"
+			            				update=":tabview:form_curso, :tabview:form_cadeiras, :tabview:form_consulta"
+										onclick="showAjaxLoader('cadastro')" oncomplete="hideAjaxLoader('cadastro')"/>																				
+								</h:form>
+		            		</div>
+		            		<div class="tab_top_right">
+		            			<div class="ajax_loader">
+									<img src="#{facesContext.externalContext.requestContextPath}/images/ajax-loader.gif" />
+								</div>
+		            		</div>
+		            		<div class="plataforma"></div>
+		            	</div>
+						
+						<h:form id="form_curso" prependId="false">						
+							
+							<div style="float: left; margin: 0 30px 0 20px;">	
+								<h:outputLabel for="curso" value="Curso: "/><br />
+								<p:selectOneMenu id="curso" value="#{turmaController.cursoSelecionado.id}" onchange="carregarPeriodos(), showAjaxLoader('cadastro')" 
+									style="height: 24px; font-size: 1.3em !important; width: 270px !important; text-align: center !important">
+				        			<f:selectItem itemLabel="" itemValue=""/>
+				        			<f:selectItems value="#{turmaController.cursos}" var="curso" itemLabel="#{curso.nome}" itemValue="#{curso.id}"/>
+				        		</p:selectOneMenu>
+				        	</div>
+				        	<div style="float: left; margin-right: 30px">		
+				        		<h:outputLabel for="periodo" value="Período: "/><br />
+				        		<p:selectOneMenu id="periodo" value="#{turmaController.periodoSelecionado}" onchange="carregarDisciplinas(), showAjaxLoader('cadastro')"
+				        			style="width: 100px !important; height: 24px; font-size: 1.3em !important; text-align: center !important">
+				        			<f:selectItem itemLabel="" itemValue=""/>
+				        			<f:selectItems value="#{turmaController.periodosStr}" var="periodo" itemLabel="#{periodo}º" itemValue="#{periodo}"/>
+				        		</p:selectOneMenu>
+				        	</div>
+				        	<div style="float: left;">		
+				        		<h:outputLabel for="turno" value="Turno: "/><br />
+				        		<p:selectOneMenu id="turno" value="#{turmaController.turnoSelecionado}" onchange="carregarTurno(), showAjaxLoader('cadastro')"
+				        			style="width: 150px !important; height: 24px; font-size: 1.3em !important; text-align: center !important">
+				        			<f:selectItem itemLabel="" itemValue=""/>
+				        			<f:selectItems value="#{turmaController.turnos}" var="turno" itemLabel="#{turno}" itemValue="#{turno}"/>
+				        		</p:selectOneMenu>
+				        	</div>	
+							
+							<p:remoteCommand name="carregarPeriodos" actionListener="#{turmaController.carregarPeriodos}" 
+								update="form_curso" oncomplete="hideAjaxLoader('cadastro')" />
+								
+							<p:remoteCommand name="carregarDisciplinas" actionListener="#{turmaController.carregarDisciplinas}" 
+								update=":tabview:form_cadeiras" oncomplete="hideAjaxLoader('cadastro')" />
+								
+							<p:remoteCommand name="carregarTurno" actionListener="#{turmaController.carregarTurnoSelecionado}" 
+								update=":tabview:form_cadeiras" oncomplete="hideAjaxLoader('cadastro')" />
+							
+							<div class="plataforma"></div>
+								
+							<br /><br />
+							
+						</h:form>
+						
+						<h:form id="form_cadeiras" prependId="false">
+							
+							<ui:repeat var="dia" value="#{turmaController.dias}">
+								<div style="float: left; width: 350px; padding-left: 20px; margin-top: 30px">
+									<p:fieldset legend="#{dia}" style="width: 300px; ">
+										<p:selectOneMenu value="#{turmaController.diaDisciplinaMap[dia].id}" onchange="carregarProfessores(), showAjaxLoader('cadastro')"
+											style="height: 24px; font-size: 1.3em !important; width: 300px !important; text-align: center !important">																													
+						        			<f:selectItem itemLabel="" itemValue="0"/>
+						        			<f:selectItems value="#{turmaController.disciplinas}" var="disciplina" itemLabel="#{disciplina.nome}" itemValue="#{disciplina.id}"/>
+						        		</p:selectOneMenu>
+						        		<br /><br />
+						        		<p:selectOneMenu value="#{turmaController.diaProfessorMap[dia].id}" 
+											style="height: 24px; font-size: 1.3em !important; width: 300px !important; text-align: center !important">
+						        			<f:selectItem itemLabel="" itemValue=""/>
+						        			<f:selectItems value="#{turmaController.diaProfessoresMap[dia]}" var="professor" itemLabel="#{professor.nome}" itemValue="#{professor.id}"/>
+						        		</p:selectOneMenu>
+									</p:fieldset>
+								</div>								
+							</ui:repeat>
+							
+							<p:remoteCommand name="carregarProfessores" actionListener="#{turmaController.carregarProfessores}" 
+								update=":tabview:form_cadeiras" oncomplete="hideAjaxLoader('cadastro')" />
+							
+							<div class="plataforma"></div>
+							
+							<div id="salvar" style="position: absolute; top: 60px; left: 130px;">
+					            <p:commandButton value="Salvar" actionListener="#{turmaController.salvar}"
+					            	update=":tabview:form_curso, :tabview:form_cadeiras, :tabview:form_consulta, :growl"
+					            	onclick="showAjaxLoader('cadastro')" oncomplete="hideAjaxLoader('cadastro')" />		            
+				         	</div>							
+														
+						</h:form>
+						
+						<br /><br />
+						
+					</div>
+					
+				</p:tab>
+				
+				<p:tab id="aba_consulta" title="Consulta">
+				
+					<div id="consulta">
+					
+						<h:form id="form_consulta" prependId="false">		
+							
+							<div class="tab_top">
+			            		<div class="tab_top_left">
+			            			<p:commandButton value="Excluir registros selecionados" onclick="confirmarExclusao.show()" update=":growl" style="float: left"/>
+			            		</div>
+			            		<div class="tab_top_right">
+			            			<div class="ajax_loader">
+										<img src="#{facesContext.externalContext.requestContextPath}/images/ajax-loader.gif" />
+									</div>
+			            		</div>
+			            		<div class="plataforma"></div>
+			            	</div>
+							
+						    <p:dataTable id="turmas_table" widgetVar="turmas_table" var="turma" value="#{turmaController.turmasDataModel}"  
+				                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+				                rowsPerPageTemplate="5,10,15,20,25,30" selection="#{turmaController.turmasSelecionadas}" emptyMessage="Nenhum registro encontrado" 
+				                paginator="true" rows="15" rowKey="#{turma.id}" styleClass="data_table">			  		 
+						  				  
+						  		<p:column selectionMode="multiple" style="width:18px" />
+						  
+						  		<p:column headerText="ID" sortBy="#{turma.id}" filterBy="#{turma.id}"
+									filterMatchMode="exact" filterStyle="width:30px;" style="width:60px">  
+						            #{turma.id}  
+						        </p:column>	
+						  
+						        <p:column headerText="Curso" sortBy="#{turma.curso.nome}" filterBy="#{turma.curso.nome}"
+									filterMatchMode="contains" filterStyle="width:300px;">  
+						           	#{turma.curso.nome}	 
+						        </p:column>
+						        
+						    </p:dataTable>
+						    
+					    </h:form>
+					    
+					</div>
+				
+				</p:tab>
+				
+			</p:tabView>
+					
+		</div>
+		
+		 <h:form id="form_exclusao_dialog" prependId="false">
+		    <p:confirmDialog id="confirmar_exclusao" message="Tem certeza eu desejas excluir estas informações?"  
+                header="Confirmação de exclusão" severity="info" widgetVar="confirmarExclusao" closable="false">  
+                
+                <div id="confirmar">  
+			        <p:commandButton id="sim" value="Sim" actionListener="#{turmaController.excluir}" 
+			        	update=":tabview:form_curso, :tabview:form_cadeiras,:tabview:form_consulta, :growl"
+			        	onclick="showAjaxLoader('consulta'), confirmarExclusao.hide()" 
+			        	oncomplete="hideAjaxLoader('consulta')" style="margin-right: 20px"/>			        		          
+			        <p:commandButton id="nao" value="Não" onclick="confirmarExclusao.hide()" type="button" />
+		        </div>  
+		                  
+		    </p:confirmDialog>
+	    </h:form>
+	    
+	    <div id="linha"></div>			
+		<div id="separador"></div>		    
+
+	</ui:define>
+
+</ui:composition>
